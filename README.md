@@ -12,6 +12,12 @@ More utilities will be added in the future.
 - RetryHandler
 - ExceptionTransformer
 
+## installation
+
+```bash
+composer require jessegall/proxy-utils
+```
+
 ## RetryHandler
 
 The `RetryHandler` class is a utility for retrying failed interactions.
