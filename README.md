@@ -26,16 +26,18 @@ It can be used to handle exceptions thrown during the execution of an interactio
 ### Usage
 
 To use the `RetryHandler`, create a new instance and pass it the maximum number of attempts allowed and an optional
-closure to determine if the interaction should be retried. The handler can than be registered with a proxy to retry failed
-interactions.
+closure that will be called before each attempt. If the closure returns `false`, the interaction will not be retried.
+The handler can than be registered with a proxy to retry failed interactions.
 
 ```php
 use JesseGall\Proxy\Proxy; 
 use JesseGall\ProxyUtils\Handlers\RetryHandler;
 
 $handler = new RetryHandler(5, function (Exception $exception, int $attempts) {
-// Return true if the interaction should be retried, false otherwise
-return someCondition($exception);
+    // Explicitly return `false` if the interaction should not be retried.
+    if (someCondition($exception)) {
+        return false;
+    }
 });
 
 // Register the handler with a proxy
@@ -47,7 +49,7 @@ $proxy->doSomethingThatMightFail();
 ```
 
 The `RetryHandler` will retry the interaction according to the specified criteria.
-If the maximum number of attempts is reached or the `shouldRetry` closure returns `false`, the `RetryHandler` will not
+If the maximum number of attempts is reached or the `beforeRetry` closure returns `false`, the `RetryHandler` will not
 retry the interaction and the exception will be thrown.
 
 ## ExceptionTransformer

@@ -25,22 +25,23 @@ class RetryHandler implements HandlesFailedExecutions
     private int $attempts = 0;
 
     /**
-     * Invoked before each retry to determine if the interaction should be retried.
+     * Invoked before each retry.
+     * If the return value is false, the interaction will not be retried.
      *
      * @var Closure|null
      */
-    private ?Closure $shouldRetry;
+    private ?Closure $beforeRetry;
 
     /**
      * Create a new RetryHandler instance.
      *
      * @param int $maxAttempts
-     * @param Closure|null $shouldRetry
+     * @param Closure|null $beforeRetry
      */
-    public function __construct(int $maxAttempts, Closure $shouldRetry = null)
+    public function __construct(int $maxAttempts, Closure $beforeRetry = null)
     {
         $this->maxAttempts = $maxAttempts;
-        $this->shouldRetry = $shouldRetry;
+        $this->beforeRetry = $beforeRetry;
     }
 
     /**
@@ -78,8 +79,8 @@ class RetryHandler implements HandlesFailedExecutions
             return false;
         }
 
-        if ($this->shouldRetry) {
-            return (bool)($this->shouldRetry)($exception, $this->attempts);
+        if ($this->beforeRetry && ($this->beforeRetry)($exception, $this->attempts) === false) {
+            return false;
         }
 
         return true;
