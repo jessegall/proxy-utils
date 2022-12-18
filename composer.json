@@ -28,5 +28,6 @@
     "scripts": {
         "test": "@php -dxdebug.mode=coverage ./vendor/bin/phpunit --testdox --coverage-html=report --colors=auto",
         "test-filter": "@test --filter="
-    }
+    },
+    "license": "MIT"
 }
