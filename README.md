@@ -12,7 +12,7 @@ More utilities will be added in the future.
 - RetryHandler
 - ExceptionTransformer
 
-## installation
+## Installation
 
 ```bash
 composer require jessegall/proxy-utils
@@ -61,19 +61,22 @@ different exceptions before rethrowing them.
 ### Usage
 
 To use the `ExceptionTransformer` class, you will need to provide it with an array of transformations, where the keys
-are class names of exception types and the values are closures that take an exception as an argument and return a
-transformed exception. The handler can than be registered with a proxy to transform exceptions thrown during the
-execution of an interaction.
+are class names of exception types and the values are closures that take the `ExecutionException` as an argument and
+return a transformed exception. The handler can than be registered with a proxy to transform exceptions thrown during
+the execution of an interaction.
 
 Here is an example of how you might use the `ExceptionTransformer` class:
 
 ```php
 use JesseGall\Proxy\Proxy;
 use JesseGall\ProxyUtils\Handlers\ExceptionTransformer;
+use JesseGall\Proxy\Forwarder\Strategies\Exceptions\ExecutionException;
 
 $transformer = new ExceptionTransformer([
-    SomeException::class => function (Exception $e) {
-        return new AnotherException;
+    SomeException::class => function (ExecutionException $e) {
+        $original = $e->getException();
+        
+        return new AnotherException($original->getMessage());
     }
 ]);
 
@@ -89,7 +92,7 @@ $proxy->someMethodThatThrowsSomeException();
 You can also use the `addTransformation` method to add additional transformations or overwrite existing ones:
 
 ```php
-$transformer->addTransformation(YetAnotherException::class, function (Exception $e) {
+$transformer->addTransformation(YetAnotherException::class, function (ExecutionException $e) {
     return new SomeException;
 });
 ```

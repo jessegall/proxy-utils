@@ -3,13 +3,14 @@
 namespace Tests;
 
 use Exception;
+use JesseGall\Proxy\Forwarder\Strategies\Exceptions\ExecutionException;
 use JesseGall\ProxyUtils\Handlers\ExceptionTransformer;
 use Tests\TestClasses\TestException;
 
 class ExceptionTransformerTest extends TestCase
 {
 
-    public function test__Given_closure__When_transform__Then_closure_invoked_with_thrown_exception()
+    public function test__Given_closure__When_transform__Then_closure_invoked_with_execution_exception()
     {
         $exception = null;
 
@@ -25,7 +26,7 @@ class ExceptionTransformerTest extends TestCase
 
         $transformer->handle($executionException);
 
-        $this->assertInstanceOf(TestException::class, $exception);
+        $this->assertInstanceOf(ExecutionException::class, $exception);
     }
 
     public function test__When_add_transformation__Then_transformation_is_added()

@@ -35,13 +35,11 @@ class ExceptionTransformer implements HandlesFailedExecutions
      */
     public function handle(ExecutionException $exception): void
     {
-        $original = $exception->getException();
-
-        if (! $this->shouldTransform($original)) {
+        if (! $this->shouldTransform($exception->getException())) {
             return;
         }
 
-        $transformed = $this->transform($original);
+        $transformed = $this->transform($exception);
 
         $exception->setException($transformed);
     }
@@ -84,12 +82,12 @@ class ExceptionTransformer implements HandlesFailedExecutions
     /**
      * Transform the given exception.
      *
-     * @param Exception $original
+     * @param ExecutionException $exception
      * @return Exception
      */
-    private function transform(Exception $original): Exception
+    private function transform(ExecutionException $exception): Exception
     {
-        return $this->transformations[get_class($original)]($original);
+        return $this->transformations[get_class($exception->getException())]($exception);
     }
 
 
